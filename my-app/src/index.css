@@ -8,6 +8,12 @@ ul {
   padding-left: 30px;
 }
 
+#root {
+  width: 100vw;
+  height: 100vw;
+  display: flex;
+}
+
 .board-row:after {
   clear: both;
   content: "";
@@ -42,6 +48,7 @@ ul {
 }
 
 .game {
+  margin: auto;
   display: flex;
   flex-direction: row;
 }
