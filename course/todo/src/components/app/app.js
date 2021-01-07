@@ -29,7 +29,7 @@ export default class App extends Component {
     }
   }
 
-  deletItem = (id) => {
+  deleteItem = (id) => {
     this.setState(({ todoData }) => {
       const idx = todoData.findIndex((el) => el.id === id);
 
@@ -45,7 +45,8 @@ export default class App extends Component {
   };
 
   addItem = (text) => {
-    const newItem = this.createTodoItem
+    const newItem = this.createTodoItem(text);
+
     this.setState(({ todoData }) => {
       const newArr = [
         ...todoData,
@@ -58,18 +59,48 @@ export default class App extends Component {
     })
   };
 
-  onToggleImportant = (id) => {
-    console.log(id, 'imp')
+  toggleProperty(arr, id, propName) {
+    const idx = arr.findIndex((el) => el.id == id);
+
+    const oldItem = arr[idx];
+    const newItem = {
+      ...oldItem,
+      [propName]: !oldItem[propName]
+    };
+
+    return [
+      ...arr.slice(0, idx),
+      newItem,
+      ...arr.slice(idx + 1)
+    ];
   }
+
+  onToggleImportant = (id) => {
+    this.setState(({ todoData }) => {
+      return {
+        todoData: this.toggleProperty(todoData, id, 'important')
+      };
+    });
+  };
 
   onToggleDone = (id) => {
-    console.log(id, 'done')
-  }
+    this.setState(({ todoData }) => {
+      return {
+        todoData: this.toggleProperty(todoData, id, 'done')
+      };
+    });
+  };
 
   render() {
+    const { todoData } = this.state;
+
+    const doneCount = todoData.filter((el) => el.done).length;
+
+    const todoCount = todoData.length - doneCount;
+
     return (
       <div className="todo-app" >
-        <AppHeader toDo={1} done={3} />
+        <AppHeader toDo={todoCount} done={doneCount} />
         <div className="top-panel d-flex">
           <SearchPanel />
           <ItemStatusFilter />
@@ -77,7 +108,7 @@ export default class App extends Component {
 
         <TodoList
           todos={this.state.todoData}
-          onDeleted={this.deletItem}
+          onDeleted={this.deleteItem}
           onToggleDone={this.onToggleDone}
           onToggleImportant={this.onToggleImportant} />
         <ItemAddForm onItemAdded={this.addItem} />
